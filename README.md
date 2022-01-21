@@ -1,1 +1,1 @@
-# COEN346_Assignments
+# COEN346 Assignment 1
