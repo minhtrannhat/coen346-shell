@@ -1,16 +1,30 @@
 #!/usr/bin/env python3
 import getpass
 import socket
+import threading
 
 
 # the interactive shell will execute all commands and quit on 'exit' command
 def main():
-    while True:
-        command = input(f"{get_username_from_OS()}@{get_hostname_from_OS()}$ ")
-        if command == "exit":
-            break
-        else:
-            execute_command(command)
+    # start the shell thread
+    shell = main_shell_thread()
+    shell.start()
+    shell.join()
+
+
+class main_shell_thread(threading.Thread):
+    def __init__(self):
+        super(main_shell_thread, self).__init__()
+
+    def run(self):
+        while True:
+            command = input(
+                f"{get_username_from_OS()}@{get_hostname_from_OS()}$ "
+            )
+            if command == "exit":
+                break
+            else:
+                execute_command(command)
 
 
 # get username to display
