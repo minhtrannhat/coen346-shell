@@ -3,6 +3,7 @@ import getpass
 import socket
 import threading
 import os
+import re
 
 
 # the interactive shell will execute all commands and quit on 'exit' command
@@ -19,13 +20,35 @@ class main_shell_thread(threading.Thread):
 
     def run(self):
         while True:
+            # capture input from user
             command = input(
                 f"{get_username_from_OS()}@{get_hostname_from_OS()}$ "
             )
+
+            # exit the shell
             if command == "exit":
                 break
             else:
-                execute_command(command)
+                # if there is a "->" or "->>", turn the command into ">" or ">>" instead
+                command = re.sub(r"-(>>)?", r"\1", command)
+
+                # create, run and wait for command thread to end
+                running_command = command_shell_thread(command)
+                running_command.start()
+                running_command.join()
+
+
+# run all commands as threads
+class command_shell_thread(threading.Thread):
+    def __init__(self, command: str):
+        super(command_shell_thread, self).__init__()
+        self.command = command
+
+    def run(self):
+        try:
+            os.system(self.command)
+        except Exception:
+            print("mini-shell: command not found: {}".format(self.command))
 
 
 # get username to display
@@ -36,15 +59,6 @@ def get_username_from_OS() -> str:
 # get hostname to display
 def get_hostname_from_OS() -> str:
     return socket.gethostname()
-
-
-# execute all commands from user
-def execute_command(command):
-    # """execute commands and handle piping"""
-    try:
-        os.system(command)
-    except Exception:
-        print("mini-shell: command not found: {}".format(command))
 
 
 if "__main__" == __name__:
