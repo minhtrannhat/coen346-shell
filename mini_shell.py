@@ -2,6 +2,7 @@
 import getpass
 import socket
 import threading
+import os
 
 
 # the interactive shell will execute all commands and quit on 'exit' command
@@ -39,7 +40,7 @@ def get_hostname_from_OS() -> str:
 
 # execute all commands from user
 def execute_command(command: str):
-    print(command)
+    os.system(command)
 
 
 if "__main__" == __name__:
