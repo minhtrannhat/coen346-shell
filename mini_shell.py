@@ -4,9 +4,22 @@ import socket
 
 import threading
 import os
+
 import re
 
+# The theoretical flow of the program is this
+#
+# This python file process
+#           |
+#   main mini-shell thread -> Will terminate on "exit" command
+#           |
+#     -------------------------------
+#     |                             |
+# foreground program            background program
+# (on a seperate thread)         (on a seperate thread)
 
+
+# This is the main entry point of the shell
 def main():
     # start the shell thread
     shell = main_shell_thread()
@@ -30,7 +43,11 @@ class main_shell_thread(threading.Thread):
             if command == "exit":
                 break
 
-            # handles background jobs
+            # Special case: handles background jobs
+            # The only way for this to end is to
+            # list all background processes with "jobs" and then
+            # either use "kill"
+            # or bring it to the foreground with "fg" and the Ctr + C to kill it
             elif "&" in command:
                 running_background_command = command_shell_thread(
                     command.split()[0]
@@ -40,6 +57,7 @@ class main_shell_thread(threading.Thread):
 
             else:
                 # if there is a "->" or "->>", turn the command into ">" or ">>" instead
+                # use regex-based substitution
                 command = re.sub(r"-(>>)?", r"\1", command)
 
                 # create, run and wait for command thread to end
@@ -75,9 +93,8 @@ if "__main__" == __name__:
     # define your PATH here
     USER_PATH = ["/home/minhradz/", "/home/minhradz/University/"]
 
+    # temporarily append to the system PATH, this will NOT affect the system PATH after the mini-shell program terminates
     os.environ["PATH"] += os.pathsep + os.pathsep.join(USER_PATH)
-
-    print(os.environ["PATH"])
 
     print("Welcome to the mini shell !\n")
     main()
