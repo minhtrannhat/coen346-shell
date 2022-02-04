@@ -91,6 +91,7 @@ def get_hostname_from_OS() -> str:
 
 if "__main__" == __name__:
     # define your PATH here
+    # PATH values have to be string and they have to be absolute paths
     USER_PATH = ["/home/minhradz/", "/home/minhradz/University/"]
 
     # temporarily append to the system PATH, this will NOT affect the system PATH after the mini-shell program terminates
