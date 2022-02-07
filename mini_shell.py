@@ -51,6 +51,7 @@ class main_shell_thread(threading.Thread):
             if command == "exit":
                 break
 
+            # special case when you only do echo
             elif command == "echo":
                 print("\n")
 
@@ -59,6 +60,7 @@ class main_shell_thread(threading.Thread):
                 running_command = command_shell_thread(command)
                 running_command.start()
 
+                # we don't join() a background command
                 if "&" in command:
                     continue
 
@@ -80,7 +82,7 @@ class command_shell_thread(threading.Thread):
             # either use "kill"
             # or bring it to the foreground with "fg" and the Ctr + C to kill it
             command.replace("&", ""),
-                  
+
         self.command = command
 
     def run(self):
