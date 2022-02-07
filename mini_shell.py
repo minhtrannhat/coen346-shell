@@ -21,6 +21,14 @@ import re
 
 # This is the main entry point of the shell
 def main():
+    # define your PATH here
+    # PATH values have to be string and they have to be absolute paths
+    USER_PATH = ["/home/minhradz/", "/home/minhradz/University/"]
+
+    # temporarily append to the system PATH, this will NOT affect the system PATH after the mini-shell program terminates
+    os.environ["PATH"] += os.pathsep + os.pathsep.join(USER_PATH)
+
+    print("Welcome to the mini shell !\n")
     # start the shell thread
     shell = main_shell_thread()
     shell.start()
@@ -43,23 +51,7 @@ class main_shell_thread(threading.Thread):
             if command == "exit":
                 break
 
-            # Special case: handles background jobs
-            # The only way for this to end is to
-            # list all background processes with "jobs" and then
-            # either use "kill"
-            # or bring it to the foreground with "fg" and the Ctr + C to kill it
-            elif "&" in command:
-                running_background_command = command_shell_thread(
-                    command.split()[0]
-                )
-                running_background_command.start()
-                # we won't have to wait for the thread to finish
-
             else:
-                # if there is a "->" or "->>", turn the command into ">" or ">>" instead
-                # use regex-based substitution
-                command = re.sub(r"-(>>)?", r"\1", command)
-
                 # create, run and wait for command thread to end
                 running_command = command_shell_thread(command)
                 running_command.start()
@@ -70,6 +62,20 @@ class main_shell_thread(threading.Thread):
 class command_shell_thread(threading.Thread):
     def __init__(self, command: str):
         super(command_shell_thread, self).__init__()
+        # if there is a "->" or "->>", turn the command into ">" or ">>" instead
+        # use regex-based substitution
+        command = re.sub(r"-(>>)?", r"\1", command)
+
+        if "&" in command:
+            # Special case: handles background jobs
+            # The only way for this to end is to
+            # list all background processes with "jobs" and then
+            # either use "kill"
+            # or bring it to the foreground with "fg" and the Ctr + C to kill it
+            command.replace("&", ""),
+            # we won't have to wait for the thread to finish
+            self.daemon = True
+
         self.command: str = command
 
     def run(self):
@@ -90,12 +96,4 @@ def get_hostname_from_OS() -> str:
 
 
 if "__main__" == __name__:
-    # define your PATH here
-    # PATH values have to be string and they have to be absolute paths
-    USER_PATH = ["/home/minhradz/", "/home/minhradz/University/"]
-
-    # temporarily append to the system PATH, this will NOT affect the system PATH after the mini-shell program terminates
-    os.environ["PATH"] += os.pathsep + os.pathsep.join(USER_PATH)
-
-    print("Welcome to the mini shell !\n")
     main()
