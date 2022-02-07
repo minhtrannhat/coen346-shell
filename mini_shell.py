@@ -51,10 +51,17 @@ class main_shell_thread(threading.Thread):
             if command == "exit":
                 break
 
+            elif command == "echo":
+                print("\n")
+
             else:
                 # create, run and wait for command thread to end
                 running_command = command_shell_thread(command)
                 running_command.start()
+
+                if "&" in command:
+                    continue
+
                 running_command.join()
 
 
@@ -73,10 +80,8 @@ class command_shell_thread(threading.Thread):
             # either use "kill"
             # or bring it to the foreground with "fg" and the Ctr + C to kill it
             command.replace("&", ""),
-            # we won't have to wait for the thread to finish
-            self.daemon = True
-
-        self.command: str = command
+                  
+        self.command = command
 
     def run(self):
         try:
