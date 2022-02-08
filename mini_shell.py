@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from path.path import set_user_path
-from threads.main_shell_thread import main_shell_thread
+from threads.main_shell_thread import caller, main_shell_thread
 
 # The theoretical flow of the program is this
 #
@@ -19,7 +19,7 @@ def main():
     set_user_path()
     print("Welcome to the mini shell !\n")
     # start the shell thread
-    shell = main_shell_thread()
+    shell = caller()
     shell.start()
     shell.join()
 
