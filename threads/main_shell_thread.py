@@ -12,15 +12,16 @@ class caller(Thread):
                 f"{get_username_from_OS()}@{get_hostname_from_OS()}$ "
             )
 
+            if "&" in command and ("echo" in command or "exit" in command):
+                main_thread.run("echo invalid syntax !")
+                continue
+
             if main_thread.run(command) == -1:
                 break
 
 
 # the interactive shell will execute all commands and quit on 'exit' command
 class main_shell_thread:
-    # def __init__(self) -> None:
-    #     super(main_shell_thread, self).__init__()
-
     def run(self, command):
         # create, run and wait for command thread to end
         running_command = command_shell_thread(command)
@@ -29,7 +30,7 @@ class main_shell_thread:
         if command == "exit":
             return -1
         # we don't join() a background command
-        if "&" in command:
+        elif "&" in command:
             return 0
 
         running_command.join()

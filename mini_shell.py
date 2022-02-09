@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from path.path import set_user_path
-from threads.main_shell_thread import caller, main_shell_thread
+from threads.main_shell_thread import caller
 
 # The theoretical flow of the program is this
 #
