@@ -18,6 +18,9 @@ class command_shell_thread(Thread):
             # either use "kill"
             # or bring it to the foreground with "fg" and the Ctr + C to kill it
             command.replace("&", ""),
+            # This will daemonize the thread,
+            # so when the main shell thread is killed,
+            # this child command thread is also killed
             self.daemon = True
 
         self.command = command
