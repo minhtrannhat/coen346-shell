@@ -1,6 +1,19 @@
-import mini_shell
 from threads.main_shell_thread import main_shell_thread
+from path.path import set_user_path
 
-command = "echo hello"
+set_user_path()
 
-main_shell_thread.run(command)
+test_thread = main_shell_thread()
+
+
+commands = [
+    "echo hello",
+    "firefox &",
+    "a.out &",
+    "echo hello world -> lol.txt",
+    "echo hello world ->> lol.txt",
+    "exit",
+]
+
+for command in commands:
+    test_thread.run(command)
