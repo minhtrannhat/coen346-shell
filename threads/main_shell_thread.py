@@ -3,6 +3,7 @@ from threading import Thread
 from threads.command_shell_thread import command_shell_thread
 
 
+# Interractive shell thread for user input
 class caller(Thread):
     def run(self):
         main_thread = main_shell_thread()
@@ -12,6 +13,7 @@ class caller(Thread):
                 f"{get_username_from_OS()}@{get_hostname_from_OS()}$ "
             )
 
+            # Edge case: echo and exit should not be ran with ampersand &
             if "&" in command and ("echo" in command or "exit" in command):
                 main_thread.run("echo invalid syntax !")
                 continue
@@ -20,7 +22,7 @@ class caller(Thread):
                 break
 
 
-# the interactive shell will execute all commands and quit on 'exit' command
+# Shell thread for running pre-determined commands
 class main_shell_thread:
     def run(self, command):
         # create, run and wait for command thread to end
